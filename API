@@ -1,0 +1,69 @@
+1. Broken Object Level Authorization
+2. Broken Authentication
+3. Broken Object Property Level Authorization
+4. Unrestricted Resource Consumption
+5. Broken Function Level Authorization
+6. Unrestricted Access to Sensitive Business Flows
+7. Server-Side Request Forgery (SSRF)
+8. Security Misconfiguration
+9. Improper Inventory Management
+10. Insufficient Transport Layer Security (TLS)
+
+Broken Object Level Authorization: 
+Description: APIs expose endpoints that handle object identifiers, creating a wide attack surface for access control issues. 
+Impact: Unauthorized access to sensitive data, modification, or deletion of resources. 
+Remediation: Implement granular access controls and verify user permissions for each requested object or resource. 
+Example Scenario: A vulnerability in the Peloton bike API allowed users to access account data of other users due to improper object-level authorization checks.
+
+Broken Authentication: 
+Description: Authentication mechanisms are often implemented incorrectly, allowing attackers to compromise authentication tokens or assume other users' identities. 
+Impact: Unauthorized access to user accounts, theft of sensitive information, or fraudulent transactions. 
+Remediation: Use strong password policies, multi-factor authentication, and protection against brute force attacks. 
+Example Scenario: An attacker exploits weak authentication to gain access to a user's account and steal sensitive information.
+
+Broken Object Property Level Authorization: 
+Description: Improper authorization validation at the object property level leads to information exposure or manipulation by unauthorized parties. 
+Impact: Unauthorized access to sensitive data or manipulation of data. 
+Remediation: Validate and sanitize data at the object property level and implement proper authorization checks. 
+Example Scenario: An API fails to validate user input, allowing an attacker to manipulate data and gain unauthorized access.
+
+Unrestricted Resource Consumption: 
+Description: API requests require resources such as network bandwidth, CPU, memory, and storage, leading to potential Denial of Service (DoS) attacks. 
+Impact: Increased operational costs, service disruptions, or complete service outages. 
+Remediation: Implement rate limiting, resource quotas, and monitor resource usage. 
+Example Scenario: An attacker sends numerous requests to an API, exhausting resources and causing service outages.
+
+Broken Function Level Authorization: 
+Description: Complex access control policies lead to authorization flaws, allowing attackers to access other users' resources or administrative functions. 
+Impact: Unauthorized access to administrative functions or user resources. 
+Remediation: Simplify access control policies and ensure clear separation between administrative and regular functions. 
+Example Scenario: An attacker exploits authorization flaws to gain access to administrative functions and modify user data.
+
+Unrestricted Access to Sensitive Business Flows: 
+Description: APIs expose business flows without compensating for potential harm if used excessively in an automated manner. 
+Impact: Automated attacks exploiting business flows, leading to financial loss or service disruption. 
+Remediation: Implement rate limiting and monitor usage of sensitive business flows. 
+Example Scenario: An attacker uses an API to automate ticket purchases, causing financial loss to the business.
+
+Server-Side Request Forgery (SSRF): 
+Description: SSRF flaws occur when an API fetches a remote resource without validating the user-supplied URI. 
+Impact: Unauthorized access to internal systems or data exposure. 
+Remediation: Validate and sanitize user-supplied URIs and restrict access to internal resources. 
+Example Scenario: An attacker exploits an SSRF vulnerability to access internal systems and exfiltrate data.
+
+Security Misconfiguration: 
+Description: APIs and supporting systems often contain complex configurations that can be missed or not followed, leading to various attacks. 
+Impact: Unauthorized access, data breaches, or service disruptions. 
+Remediation: Follow security best practices for configuration, regularly update and patch systems. 
+Example Scenario: An attacker exploits a misconfigured API to gain unauthorized access to sensitive data.
+
+Improper Inventory Management: 
+Description: APIs expose more endpoints than traditional web applications, making proper and updated documentation highly important. Impact: Difficulty in managing and securing APIs, leading to potential vulnerabilities. 
+Remediation: Maintain an updated inventory of API endpoints and ensure proper documentation. 
+Example Scenario: An outdated API version with exposed debug endpoints is exploited by an attacker.
+
+Insufficient Transport Layer Security (TLS): 
+Description: APIs may not use TLS correctly, leading to data exposure and man-in-the-middle attacks. 
+Impact: Data exposure, interception, or tampering. 
+Remediation: Implement TLS correctly, enforce HTTPS, and use strong encryption protocols. 
+Example Scenario: An attacker intercepts unencrypted API traffic and steals sensitive information.
