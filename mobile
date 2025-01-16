@@ -11,7 +11,8 @@
 
 1. Improper Credential Usage
 Description: This vulnerability occurs when mobile applications use hardcoded credentials or mishandle user credentials, making them susceptible to unauthorized access. 
-Impact: Severe - Unauthorized users can access sensitive information, perform fraudulent activities, and compromise user privacy. Remediation: Avoid hardcoded credentials, implement secure credential handling practices, encrypt credential transmissions, and store credentials securely. 
+Impact: Severe - Unauthorized users can access sensitive information, perform fraudulent activities, and compromise user privacy. 
+Remediation: Avoid hardcoded credentials, implement secure credential handling practices, encrypt credential transmissions, and store credentials securely. 
 Example Scenario: An attacker discovers hardcoded credentials in the app's source code, allowing them to gain unauthorized access to sensitive functionalities and user data.
 
 2. Inadequate Supply Chain Security
@@ -23,11 +24,13 @@ Example Scenario: An attacker exploits a vulnerability in a third-party library 
 3. Insecure Authentication/Authorization
 Description: Weak authentication and authorization mechanisms make it easier for attackers to gain unauthorized access to the app. 
 Impact: Severe - Unauthorized access can lead to data breaches, account hijacking, and other malicious activities. 
-Remediation: Implement strong authentication mechanisms, enforce multifactor authentication, and follow the principle of least privilege. Example Scenario: An attacker uses a brute-force attack to guess weak passwords, gaining unauthorized access to user accounts.
+Remediation: Implement strong authentication mechanisms, enforce multifactor authentication, and follow the principle of least privilege. 
+Example Scenario: An attacker uses a brute-force attack to guess weak passwords, gaining unauthorized access to user accounts.
 
 4. Insufficient Input/Output Validation
 Description: Failure to properly validate user input and sanitize output can lead to various security vulnerabilities, including injection attacks. 
-Impact: High - Attackers can exploit these weaknesses to execute malicious code, steal data, or perform other malicious activities. Remediation: Implement robust input validation and output sanitization practices, and use secure coding techniques. 
+Impact: High - Attackers can exploit these weaknesses to execute malicious code, steal data, or perform other malicious activities. 
+Remediation: Implement robust input validation and output sanitization practices, and use secure coding techniques. 
 Example Scenario: An attacker injects malicious SQL code through a form input, compromising the app's database.
 
 5. Insecure Communication
@@ -39,7 +42,8 @@ Example Scenario: An attacker intercepts unencrypted communication between the a
 6. Inadequate Privacy Controls
 Description: Insufficient privacy measures can lead to unauthorized access to personal data and privacy violations. 
 Impact: High - Users' personal information can be exposed, leading to identity theft and other privacy breaches. 
-Remediation: Implement strong privacy controls, follow data minimization principles, and ensure compliance with privacy regulations. Example Scenario: An app collects excessive user data without proper consent, leading to a privacy violation.
+Remediation: Implement strong privacy controls, follow data minimization principles, and ensure compliance with privacy regulations. 
+Example Scenario: An app collects excessive user data without proper consent, leading to a privacy violation.
 
 7. Insufficient Binary Protections
 Description: Lack of proper binary protections makes it easier for attackers to reverse engineer and tamper with the app. 
@@ -50,7 +54,8 @@ Example Scenario: An attacker reverse engineers the app, discovers a vulnerabili
 8. Security Misconfiguration
 Description: Incorrectly configured security settings can expose the app to various security risks. 
 Impact: Moderate - Attackers can exploit misconfigurations to gain unauthorized access and perform malicious activities. 
-Remediation: Follow secure configuration guidelines, conduct regular security audits, and apply configuration management practices. Example Scenario: An app has default or weak configurations, allowing an attacker to gain administrative access.
+Remediation: Follow secure configuration guidelines, conduct regular security audits, and apply configuration management practices. 
+Example Scenario: An app has default or weak configurations, allowing an attacker to gain administrative access.
 
 9. Insecure Data Storage
 Description: Improper storage of sensitive data can lead to unauthorized access and data breaches. 
