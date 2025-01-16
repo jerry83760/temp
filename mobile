@@ -1,3 +1,14 @@
+1. Improper Credential Usage 
+2. Inadequate Supply Chain Security 
+3. Insecure Authentication/Authorization 
+4. Insufficient Input/Output Validation 
+5. Insecure Communication 
+6. Inadequate Privacy Controls 
+7. Insufficient Binary Protections 
+8. Security Misconfiguration 
+9. Insecure Data Storage 
+10. Insufficient Cryptography
+
 1. Improper Credential Usage
 Description: This vulnerability occurs when mobile applications use hardcoded credentials or mishandle user credentials, making them susceptible to unauthorized access. 
 Impact: Severe - Unauthorized users can access sensitive information, perform fraudulent activities, and compromise user privacy. Remediation: Avoid hardcoded credentials, implement secure credential handling practices, encrypt credential transmissions, and store credentials securely. 
