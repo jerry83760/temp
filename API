@@ -58,7 +58,8 @@ Remediation: Follow security best practices for configuration, regularly update 
 Example Scenario: An attacker exploits a misconfigured API to gain unauthorized access to sensitive data.
 
 Improper Inventory Management: 
-Description: APIs expose more endpoints than traditional web applications, making proper and updated documentation highly important. Impact: Difficulty in managing and securing APIs, leading to potential vulnerabilities. 
+Description: APIs expose more endpoints than traditional web applications, making proper and updated documentation highly important. 
+Impact: Difficulty in managing and securing APIs, leading to potential vulnerabilities. 
 Remediation: Maintain an updated inventory of API endpoints and ensure proper documentation. 
 Example Scenario: An outdated API version with exposed debug endpoints is exploited by an attacker.
 
