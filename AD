@@ -1,0 +1,25 @@
+LDAP
+DC
+DA vs EA
+Kerberos (https://en.hackndo.com/kerberos/)
+Golden vs silver ticket
+Kerberoastng
+Mimitakz
+Bloodhound
+Constrained vs unconstrained delegation vs relation based constrained delegation
+PTT vs PTH
+NTLM relay
+
+Kerberos 
+This is a ticket based authentication protocol named after a mythical 3 headed dog, in this protocol the user do not needs to provide the password every time ,  this is centralized authentication
+3 components are required:
+	a. Client
+	b. Service
+	c. Key Distribution Center (KDC) usually DC and have Authentication Server (AS) and Ticket Granting Service (TGS)
+	
+	Working:
+		a. Client sends a request for TGT to AS called KRB_AS_REQ (Keberos Authentication Service Request), this request contains the name of the client and timestamp of that request is encrypted with the NTLM hash of that client's password.
+		b. Then AS decrypts that request with the client's NTLM hashed password and verifies it that the request is coming from where it claims to be, then it sends a TGT encrypted with krbtgt user NTLM hashed password called KRB_AS_REP
+		c. Now, clients wants to use a service CIFS or SERVER01 for that it will send his encrypted TGT asking for a TGS ticket of that service called KRB_TGS_REQ
+		d. KDC will decrypt that TGT and verifies, after validation KDC sends an TGS ticket encrypted with service NTLM hashed password to client called KRB_TGS_REP
+		e. Client sends the TGS ticket to the service (CIFS or SERVER01) then service decrypts that TGS with its own secret called Application Request (KRB_AP_REQ)
