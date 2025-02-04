@@ -1,0 +1,21 @@
+Session Hijacking vs Session Fixation
+
+Session Fixation:
+	• Goal: Set a session ID before the victim logs in.
+	• How it works: Attacker tricks victim into using a session ID they already know.
+	• Example: Attacker sends a link with a pre-set session ID. Victim logs in and the attacker gains access.
+Session Hijacking:
+	• Goal: Steal an active session ID.
+	• How it works: Attacker captures an existing session ID to impersonate the victim.
+	• Example: Attacker intercepts session ID via MITM attack or sniffing.
+Key Differences:
+	• Fixation: Attacker sets the session ID.
+	• Hijacking: Attacker steals the session ID.
+
+
+Secure flag vs httponly flag vs samesite
+directory listing vs Path traversal vs lfi vs rfi vs 
+Command Injection vs RCE
+CDN vs load balancer vs WAF
+DNS exfiltration
+
