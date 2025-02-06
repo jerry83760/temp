@@ -1,0 +1,133 @@
+When an attacker manipulates a standard SQL query by injecting malicious SQL code, potentially accessing or altering sensitive data.
+
+Impact:
+	1. Allow the attacker to access, modify and delete information in a database. 
+	2. Data breach
+	3. Login bypass
+
+Mitigation
+	1. Prepared Statements: Use parameterized queries to separate SQL logic from data. As it execute commands from the parameter.
+		Sample Code: cursor.execute("SELECT * FROM users WHERE username = %s", (username,))
+	2. Stored Procedures: Use pre-defined database procedures. Includes predefined conditions like vachar(100)
+	3. Input Validation: Sanitize all user inputs.
+	4. Error Handling: Avoid exposing error messages.
+	5. Least Privilege Principle: Limit database permissions.
+
+Basic Techniques
+	1. Error-Based SQL Injection: Exploits database error messages to gain insights.
+		○ Example: ' OR '1'='1
+		
+	2. Union-Based SQL Injection: Combines results from multiple SELECT statements.
+		○ Example: ' UNION SELECT username, password FROM users --
+		
+	3. Blind SQL Injection: No error messages; takes information based on responses.
+		○ Boolean-Based: True/false conditions.
+		○ Time-Based: Delays to extract data.
+
+Advanced Techniques
+	1. Out-of-Band SQL Injection: Uses DNS/HTTP requests to exfiltrate data, mainly used for blind SQL
+	2. Second-Order SQL Injection: application takes user input from an HTTP request and stores it and exploited later.
+
+Example for second order injection:
+	Profile Update:
+		• A user updates their profile with an SQL injection in the address field, which gets saved in the database.
+		• When the application later fetches the address for display, the injection executes and manipulates the database.
+		• Registration and Login Phase: An attacker registers with the username admin' --, which stores the injection in the database. Later, when trying to log in, the attacker uses the username admin' --, bypassing the password check and gaining access.
+---------------------------------------------------------------------------------------------------------------------
+CSRF is a type of security vulnerability where an attacker tricks a user's web browser into performing an unwanted action on a trusted site where the user is authenticated. This is achieved by exploiting the fact that the browser includes any relevant cookies (credentials) automatically, allowing the attacker to forge and submit unauthorised requests on behalf of the user (through the browser). The attacker's website may contain HTML forms or JavaScript code that is intended to send queries to the targeted web application.
+
+Impact:
+	• Unauthorised Access: Attackers can access and control a user's actions, putting them at risk of losing money, damaging their reputation, and facing legal consequences.
+	• Exploiting Trust: CSRF exploits the trust websites put in their users, undermining the sense of security in online browsing.
+	• Stealthy Exploitation: CSRF works quietly, using standard browser behaviour without needing advanced malware. Users might be unaware of the attack, making them susceptible to repeated exploitation.
+	
+	Tool:	https://github.com/haqqibrahim/Project-Forgery
+	
+Mitigation:
+	• Anti-CSRF Tokens: Implement CSRF tokens that are unique and secret for each user session. This token must be included in forms and validated by the server.
+		• Example: A hidden field in forms <input type="hidden" name="csrf_token" value="...">.
+	• SameSite Cookie Attribute: Set the SameSite attribute on cookies to prevent them from being sent with cross-origin requests.
+		• Values: Strict (cookies are not sent with cross-site requests) or Lax (cookies are sent with same-site requests and safe cross-site requests).
+	• Referer Header Validation: Check the Referer header to ensure that requests originate from legitimate sources.
+	• User Interaction: Require re-authentication or confirmation for sensitive actions (e.g., fund transfers, password changes).
+
+How CSRF Works
+	1. User Authentication: The user logs into a web application, receiving a session cookie.
+	2. Malicious Link or Form: The user visits a malicious website that contains code to send requests to the legitimate web application.
+	3. Execution of Request: The browser automatically includes the session cookie when making requests to the legitimate site, thereby executing actions that the attacker intends, such as changing account settings or making purchases.
+
+Common Scenarios
+	• Changing Account Settings: An attacker could trick a user into changing their email address or password.
+	• Financial Transactions: Users may unintentionally transfer money or make purchases.
+	• Data Deletion: An attacker could delete a user’s data or records.
+
+Example of CSRF
+	Malicious HTML Code:
+		<form action="https://bank.com/transfer" method="POST">
+    <input type="hidden" name="amount" value="1000">
+    <input type="hidden" name="to" value="attacker_account">
+    <input type="submit" value="Click here to win a prize!">
+</form>
+In this example, when the user clicks the submit button, the browser sends the POST request to the bank’s site with the user’s session cookie, transferring money without the user's knowledge.
+---------------------------------------------------------------------------------------------------------------------
+SSRF is an attack where an application is manipulated to interact with internal/external networks or the local machine due to mishandled URLs, allowing attackers to forge requests.
+Examples include fetching images from external servers, custom webhooks, or internal requests to other services.
+
+Impact:
+	a) Access to sensitive resources (e.g., databases, APIs, internal systems).
+	b) Data leakage, unauthorized access, and service disruption.
+	c) Port scan
+	d) Firewall bypass
+
+Mitigation:
+	a. Case 1 (Allowlist Approach):
+		• Identify trusted applications for communication.
+		• Consider network segmentation to limit SSRF impact
+	b. Case 2 (No Allowlist):
+		• Validate user input carefully to prevent malicious URLs.
+		• Use URL parsers to extract hostnames and IPs.
+		
+
+NOTE: Whitelisting is more secure as it restrict the access to only what is allowed while blacklisting is easy to implement but less effective as attackers may find ways to bypass it.
+--------------------------------------------------------------------------------------------------------------
+JWTs are very simple tokens that allow you to store key-value pairs on a token that provides integrity as part of the token. The idea is that you can generate tokens that you can give your users with the certainty that they won't be able to alter the key-value pairs and pass the integrity check. 
+They can theoretically contain any kind of data, but are most commonly used to send information ("claims") about users as part of authentication, session handling, and access control mechanisms.
+
+Most used default algorithms used:
+	a. HS256 (symmetric)
+	b. RS256 (asymmetric)
+
+The structure of a JWT token is formed of 3 parts each base base64 URL encoded and separated by dots:
+	i) header contains metadata indicating this is a JWT, and the signing algorithm in use is HS256. 
+	ii) payload contains the key-value pairs with the data that the web application wants the client to store.
+	iii) signature is similar to a hash, taken to verify the payload's integrity. 
+	
+If you change the payload, the web application can verify that the signature won't match the payload and know that you tampered with the JWT. Unlike a simple hash, this signature involves the use of a secret key held by the server only, which means that if you change the payload, you won't be able to generate the matching signature unless you know the secret key.
+
+Signing Algorithms
+
+	1. None - The None algorithm means no algorithm is used for the signature. Effectively, this is a JWT without a signature, meaning that the verification of the claims provided in the JWT cannot be verified through the signature.
+	2. Symmetric Signing - A symmetric signing algorithm, such as HS265, creates the signature by appending a secret value to the header and body of the JWT before generating a hash value. Verification of the signature can be performed by any system that has knowledge of the secret key.
+	3. Asymmetric Signing - An asymmetric signing algorithm, such as RS256, creates the signature by using a private key to sign the header and body of the JWT. This is created by generating the hash and then encrypting the hash using the private key. Verification of the signature can be performed by any system that has knowledge of the public key associated with the private key that was used to create the signature.
+
+Impact
+The impact of JWT attacks is usually severe. If an attacker is able to create their own valid tokens with arbitrary values, they may be able to escalate their own privileges or impersonate other users, taking full control of their accounts.
+
+Use cases:
+	1. Unverified signature, simple tampering the fields the server will not verify the signature
+	2. Set the algorithm to None and remove signature, Remember to add a DOT after payload
+	3. Brute force secret keys (if algo is HS256)
+		a. Command:	hashcat -a 0 -m 16500 <jwt> <wordlist>
+		Wordlist	https://github.com/wallarm/jwt-secrets/blob/master/jwt.secrets.list
+		JWT.io	Enter secret in signature and then modify the token
+		
+	4. Signature Algorithm Confusion
+		In a typical JWT implementation, the signature is generated based on a header, payload, and a secret key or private key depending on the algorithm used:
+			• HMAC (e.g., HS256): A symmetric key (shared secret).
+			• RSA or ECDSA (e.g., RS256, ES256): An asymmetric key (public/private key pair).
+		However, attackers can exploit situations where the algorithm field in the JWT header is not properly validated or handled. 
+		It specifically happens with confusion between symmetric and asymmetric signing algorithms. If an asymmetric signing algorithm, for example, RS256 is used, it may be possible to downgrade the algorithm to HS256. In these cases, some libraries would default back to using the public key as the secret for the symmetric signing algorithm. Since the public key can be known, you can forge a valid signature by using the HS256 algorithm in combination with the public key. Sometimes, the public key is even embedded as a claim in the JWT. 
+	5. Cross-Service Relay Attack
+		A JWT Cross-Service Relay Attack is a type of attack that exploits JWT (JSON Web Tokens) in a multi-service architecture, where an attacker uses a legitimate JWT issued for one service to impersonate a user or perform unauthorized actions on another service. This attack often targets the way JWTs are issued and validated across different services, and it can be particularly dangerous if the services fail to properly verify claims, including the audience (aud) claim, within the token.
+		FIX: The audience claim should be verified when the token is decoded.
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
