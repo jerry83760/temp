@@ -1,25 +1,123 @@
+Active directory
+	Active Directory (AD) is a Microsoft service used for managing and organizing users, devices, and resources in a network.
+		• Purpose: Centralized authentication, access control, and network management.
+		• Components: Includes domain controllers, user/group management, and group policies.
+		• Uses: User login, security settings, permissions, and resource management.
+	In short, Active Directory helps manage users, devices, and permissions within a network.
+
 LDAP
-DC
-DA vs EA
+	LDAP (Lightweight Directory Access Protocol) is a protocol used to access and manage directory information, typically for authentication and resource management.
+		○ Purpose: Stores data like user credentials, contact information, and network resources.
+		○ Uses: Centralized authentication (e.g., Active Directory), address books, and access control.
+		○ Structure: Data is stored in a hierarchical tree format.
+		○ How it works: Clients send queries to an LDAP server to retrieve or manage directory information.
+	In short, LDAP helps manage and access network-related data in a secure, organized way.
+
+Domain Controller
+	A Domain Controller (DC) is a server that manages and authenticates users, computers, and other resources within a network using Active Directory.
+		• Purpose: It verifies user logins and enforces security policies.
+		• Role: Stores the Active Directory database and handles tasks like authentication and access control.
+	In short, a Domain Controller is the central server that manages network security and user authentication in an Active Directory domain.
+	
+Domain Admin vs Enterprise Admin
+	• Domain Admin: A user with full administrative rights over a specific domain. They can manage users, groups, computers, and other resources within that domain.
+	• Enterprise Admin: A user with administrative rights across all domains in an Active Directory forest. They have broader control, including managing multiple domains and global settings.
+	In short:
+		○ Domain Admin = Admin of a specific domain.
+		○ Enterprise Admin = Admin of all domains in the forest.
+
+AMSI
+	AMSI (Antimalware Scan Interface) is a Microsoft security feature that helps detect and block malicious scripts and files in real-time.
+	
 Kerberos (https://en.hackndo.com/kerberos/)
-Golden vs silver ticket
-Kerberoastng
+	This is a ticket based authentication protocol named after a mythical 3 headed dog, in this protocol the user do not needs to provide the password every time ,  this is centralized authentication
+	3 components are required:
+		a. Client
+		b. Service
+		c. Key Distribution Center (KDC) usually DC and have Authentication Server (AS) and Ticket Granting Service (TGS)
+		
+		Working:
+			i. Client sends a request for TGT to AS called KRB_AS_REQ (Keberos Authentication Service Request), this request contains the name of the client and timestamp of that request is encrypted with the NTLM hash of that client's password.
+			ii. Then AS decrypts that request with the client's NTLM hashed password and verifies it that the request is coming from where it claims to be, then it sends a TGT encrypted with krbtgt user NTLM hashed password called KRB_AS_REP
+			iii. Now, clients wants to use a service CIFS or SERVER01 for that it will send his encrypted TGT asking for a TGS ticket of that service called KRB_TGS_REQ
+			iv. KDC will decrypt that TGT and verifies, after validation KDC sends an TGS ticket encrypted with service NTLM hashed password to client called KRB_TGS_REP
+			v. Client sends the TGS ticket to the service (CIFS or SERVER01) then service decrypts that TGS with its own secret and provides the service ith correct privileges that user have called Application Request (KRB_AP_REQ)
+LSASS
+	LSASS (Local Security Authority Subsystem Service) is a critical Windows process responsible for enforcing security policies in an Active Directory (AD) environment.
+		• Role: It handles user authentication, password validation, and generating access tokens when users log in to the system.
+		• In Active Directory: LSASS is responsible for ensuring that authentication requests to the domain controller are processed, such as validating usernames and passwords and managing security policies.
+	In short, LSASS is the Windows service that manages security and authentication tasks in Active Directory, ensuring that users are properly authenticated and authorized.
+
 Mimitakz
+	Mimikatz is a tool used to extract passwords, hashes, and Kerberos tickets from Windows systems. It can dump credentials from memory, enable Pass-the-Hash attacks, and create Golden Tickets for unauthorized access.
+	Key uses:
+		• Password extraction from memory.
+		• Pass-the-Hash for authentication without clear-text passwords.
+		• Kerberos ticket manipulation (e.g., Golden Tickets).
+	Prevention:
+		• Use strong, unique passwords.
+		• Disable LM/NTLM hashes.
+		• Restrict access to LSASS memory.
+		• Use Credential Guard for memory protection.
+
 Bloodhound
-Constrained vs unconstrained delegation vs relation based constrained delegation
+	BloodHound is an open-source tool used to map out attack paths and privilege escalation opportunities in Active Directory (AD) environments. It helps identify how attackers could gain elevated privileges, like Domain Admin access, by analyzing AD permissions and group memberships.
+	Requires:
+			i. Neo4J to store data
+			ii. Sharphound will collect the data
+			iii. Bloodhound will represent the data
+
+Golden ticket
+	A Golden Ticket is a forged Kerberos ticket that gives attackers unlimited access to a network by impersonating any user (including domain admins) in an Active Directory environment.
+	How it works:
+		• Attackers compromise the KRBTGT account (used to encrypt/decrypt Kerberos tickets).
+		• They forge a TGT (Ticket Granting Ticket) to impersonate users and access resources without limits.
+	Prevention:
+		1. Change KRBTGT password regularly.
+		2. Secure the KRBTGT account and limit access.
+		3. Use strong passwords and MFA for high-privilege accounts.
+		4. Monitor for suspicious Kerberos activity.
+		5. Limit admin access and apply least privilege.
+	In short, Golden Tickets grant attackers persistent access, and prevention focuses on securing the KRBTGT account, using strong authentication, and monitoring for signs of compromise.
+	
+Silver ticket
+	A Silver Ticket is a forged Kerberos service ticket that allows attackers to access specific network resources (like file servers or applications) without needing to authenticate again, typically targeting a single service rather than the entire domain.
+	How it works:
+		• The attacker compromises a service account (e.g., for a file server).
+		• They forge a service ticket (TGS - Ticket Granting Service) using the service account's password hash.
+		• The attacker uses the forged ticket to gain unauthorized access to the targeted service.
+	Prevention:
+		1. Secure service account passwords with strong, complex credentials.
+		2. Regularly change service account passwords and use managed service accounts.
+		3. Limit access to service account credentials and restrict privileged access.
+		4. Monitor for unusual service ticket requests.
+		5. Implement network segmentation to isolate critical resources.
+	In short, a Silver Ticket allows attackers access to specific services using forged tickets, and prevention focuses on securing service accounts, changing passwords, and monitoring service ticket activity.
+
+Skeleton key
+	A Skeleton Key is a malware that allows attackers to bypass authentication on a Windows domain by injecting a master password into the LSASS (Local Security Authority Subsystem Service) process. This key enables attackers to log in as any user, including domain admins, without needing their actual credentials.
+	How it works:
+		• The attacker deploys the Skeleton Key malware on a domain controller.
+		• It injects a backdoor password into the LSASS process, which works for all domain accounts.
+		• The attacker can log in to any machine in the domain using the backdoor password, bypassing the normal authentication.
+	Prevention:
+		1. Patch and update systems regularly.
+		2. Use Endpoint Detection and Response (EDR) tools.
+		3. Segment networks and limit access to domain controllers.
+		4. Implement Multi-Factor Authentication (MFA) for critical accounts.
+	
+Kerberoastng
+	Kerberoasting is an attack method that targets service accounts in a Kerberos authentication environment, like Active Directory. The attacker aims to obtain service account Kerberos tickets (TGS) and crack them offline to retrieve the service account's password.
+	How it works:
+		1. The attacker requests service tickets for service accounts in the domain (using a valid user account).
+		2. The attacker gets encrypted TGS tickets for services, which are encrypted with the service account's password.
+		3. The attacker cracks the TGS tickets offline using tools like John the Ripper or Hashcat to obtain the plaintext password of the service account.
+
+Constrained vs Unconstrained vs Resource based constrained delegation
+	• Unconstrained Delegation: Allows a service to impersonate a user to any resource in the domain. High risk.
+	• Constrained Delegation: Limits a service to impersonating a user only to specific services or servers. More secure than unconstrained.
+	• Resource-Based Constrained Delegation (RBCD): The target resource (service) defines which accounts can delegate to it, providing more flexibility and security.
+
 PTT vs PTH
 NTLM relay
-
-Kerberos 
-This is a ticket based authentication protocol named after a mythical 3 headed dog, in this protocol the user do not needs to provide the password every time ,  this is centralized authentication
-3 components are required:
-	a. Client
-	b. Service
-	c. Key Distribution Center (KDC) usually DC and have Authentication Server (AS) and Ticket Granting Service (TGS)
-	
-	Working:
-		a. Client sends a request for TGT to AS called KRB_AS_REQ (Keberos Authentication Service Request), this request contains the name of the client and timestamp of that request is encrypted with the NTLM hash of that client's password.
-		b. Then AS decrypts that request with the client's NTLM hashed password and verifies it that the request is coming from where it claims to be, then it sends a TGT encrypted with krbtgt user NTLM hashed password called KRB_AS_REP
-		c. Now, clients wants to use a service CIFS or SERVER01 for that it will send his encrypted TGT asking for a TGS ticket of that service called KRB_TGS_REQ
-		d. KDC will decrypt that TGT and verifies, after validation KDC sends an TGS ticket encrypted with service NTLM hashed password to client called KRB_TGS_REP
-		e. Client sends the TGS ticket to the service (CIFS or SERVER01) then service decrypts that TGS with its own secret called Application Request (KRB_AP_REQ)
+Unquoted service path
